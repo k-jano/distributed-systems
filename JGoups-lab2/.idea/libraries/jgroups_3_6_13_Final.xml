@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="jgroups-3.6.13.Final">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jgroups-3.6.13.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/protobuf-java-2.4.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

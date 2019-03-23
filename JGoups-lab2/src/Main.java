@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    private static final String myChannel="MyCluster";
+    private String myChannel="MyCluster";
     private JChannel channel;
     private DistributedMap distributedMap;
 
@@ -47,6 +47,12 @@ public class Main {
             case "SHOW": System.out.println(distributedMap.getMap());
                          break;
 
+            case "CHANGE":  if(list.size()==0)
+                                return;
+                            myChannel = list.pop();
+                            channel.disconnect();
+                            channel.connect(myChannel, null, 0);
+
             default: System.out.println("Wrong command");
         }
     }
@@ -69,6 +75,7 @@ public class Main {
         processTheMessage(list);
     }
 
+    @SuppressWarnings("InfiniteLoopStatement")
     private void inputCommand() throws Exception {
         Scanner scanner = new Scanner(System.in);
         while (true){
@@ -101,6 +108,7 @@ public class Main {
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public void setState(InputStream input) throws Exception {
                 HashMap<String, Integer> map;
                 map = (HashMap<String, Integer>) Util.objectFromStream(new DataInputStream(input));
@@ -110,6 +118,7 @@ public class Main {
             @Override
             public void viewAccepted(View view) {
                 if(view instanceof  MergeView){
+                    //System.out.println("In view accepted");
                     ViewHandler handler = new ViewHandler(channel, (MergeView) view);
                     handler.start();
                 }
