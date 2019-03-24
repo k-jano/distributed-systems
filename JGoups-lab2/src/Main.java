@@ -1,5 +1,10 @@
 import org.jgroups.*;
-import org.jgroups.protocols.UDP;
+import org.jgroups.protocols.*;
+import org.jgroups.protocols.pbcast.GMS;
+import org.jgroups.protocols.pbcast.NAKACK2;
+import org.jgroups.protocols.pbcast.STABLE;
+import org.jgroups.protocols.pbcast.STATE;
+import org.jgroups.stack.ProtocolStack;
 import org.jgroups.util.Util;
 
 import java.io.DataInputStream;
@@ -128,16 +133,35 @@ public class Main {
 
     private void start() throws Exception{
         distributedMap = new DistributedMap();
-        channel = new JChannel();
+        channel = new JChannel(false);
+        ProtocolStack stack=new ProtocolStack();
+        channel.setProtocolStack(stack);
+        stack.addProtocol(new UDP().setValue("mcast_group_addr", InetAddress.getByName("230.100.200.5")))
+                .addProtocol(new PING())
+                .addProtocol(new MERGE3())
+                .addProtocol(new FD_SOCK())
+                .addProtocol(new FD_ALL().setValue("timeout", 12000).setValue("interval", 3000))
+                .addProtocol(new VERIFY_SUSPECT())
+                .addProtocol(new BARRIER())
+                .addProtocol(new NAKACK2())
+                .addProtocol(new UNICAST3())
+                .addProtocol(new STABLE())
+                .addProtocol(new GMS())
+                .addProtocol(new UFC())
+                .addProtocol(new MFC())
+                .addProtocol(new FRAG2())
+                .addProtocol(new STATE());
+
+        stack.init();
         listening();
         channel.setDiscardOwnMessages(true);
-        channel.connect(myChannel, null, 0);
+        channel.connect(myChannel);
+        channel.getState(null, 0);
         inputCommand();
     }
 
     public static void main (String[] args) throws Exception{
         System.setProperty("java.net.preferIPv4Stack","true");
-        //new UDP().setValue("mcast_group_addr", InetAddress.getByName("230.100.200.x"));
         new Main().start();
     }
 
