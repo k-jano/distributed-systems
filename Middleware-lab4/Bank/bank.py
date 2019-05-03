@@ -1,20 +1,29 @@
-import Ice
-Ice.loadSlice("../ICE/ClientBank.ice")
+import sys, Ice
+import argparse
+sys.path.append("../ICE/iceOUT")
 import ClientBank
-from bankAccountI import runBankAccount
+from currencyUpdater import CurrencyUpdater
 
-bank_id=''
-currencies=[]
+class BankManagerI(ClientBank.UsersRegistration):
+    def __init__(self, currencyUpdater):
+        self.currencyUpdater = currencyUpdater
+        self.usersDict = dict()
 
-class Bank():
-    def __init__(self, bank_id, currencies, port):
-        Bank.bank_id = bank_id
-        Bank.currencies = currencies
-        print(ClientBank)
-        print(bank_id)
-        print(currencies)
-        print(port)
-        runBankAccount(port)
+    def register(self, name, surname, pesel, income, current=None):
+        print("Register catched")
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('port', type=int)
+    parser.add_argument('currencies', nargs='+')
+    args= parser.parse_args()
+    currencyUpdater = CurrencyUpdater(set(args.currencies))
 
-#Bank("ul", "ce")
+    with Ice.initialize(sys.argv) as communicator:
+        port=args.port
+        adapter = communicator.createObjectAdapterWithEndpoints("BankAdapter", "default -p " + str(port))
+        bankManager = BankManagerI(currencyUpdater)
+        adapter.add(bankManager, communicator.stringToIdentity("BankManager"))
+        adapter.activate()
+        communicator.waitForShutdown()
+    
