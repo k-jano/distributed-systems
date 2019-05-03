@@ -43,8 +43,7 @@ if 'UnauthorizedErr' not in _M_ClientBank.__dict__:
 if 'RegistrationErr' not in _M_ClientBank.__dict__:
     _M_ClientBank.RegistrationErr = Ice.createTempClass()
     class RegistrationErr(Ice.UserException):
-        def __init__(self, pesel=0, msg=''):
-            self.pesel = pesel
+        def __init__(self, msg=''):
             self.msg = msg
 
         def __str__(self):
@@ -54,10 +53,7 @@ if 'RegistrationErr' not in _M_ClientBank.__dict__:
 
         _ice_id = '::ClientBank::RegistrationErr'
 
-    _M_ClientBank._t_RegistrationErr = IcePy.defineException('::ClientBank::RegistrationErr', RegistrationErr, (), False, None, (
-        ('pesel', (), IcePy._t_long, False, 0),
-        ('msg', (), IcePy._t_string, False, 0)
-    ))
+    _M_ClientBank._t_RegistrationErr = IcePy.defineException('::ClientBank::RegistrationErr', RegistrationErr, (), False, None, (('msg', (), IcePy._t_string, False, 0),))
     RegistrationErr._ice_type = _M_ClientBank._t_RegistrationErr
 
     _M_ClientBank.RegistrationErr = RegistrationErr
@@ -182,19 +178,111 @@ if 'LoanResponse' not in _M_ClientBank.__dict__:
         __repr__ = __str__
 
     _M_ClientBank._t_LoanResponse = IcePy.defineStruct('::ClientBank::LoanResponse', LoanResponse, (), (
-        ('valuePLN', (), IcePy._t_double),
-        ('currencyValue', (), IcePy._t_double),
+        ('valuePLN', (), IcePy._t_float),
+        ('currencyValue', (), IcePy._t_float),
         ('currency', (), _M_ClientBank._t_Currency),
-        ('loanPercent', (), IcePy._t_double)
+        ('loanPercent', (), IcePy._t_float)
     ))
 
     _M_ClientBank.LoanResponse = LoanResponse
     del LoanResponse
 
+if 'AccountKey' not in _M_ClientBank.__dict__:
+    _M_ClientBank.AccountKey = Ice.createTempClass()
+    class AccountKey(object):
+        def __init__(self, pesel='', type=_M_ClientBank.Type.STANDARD):
+            self.pesel = pesel
+            self.type = type
+
+        def __hash__(self):
+            _h = 0
+            _h = 5 * _h + Ice.getHash(self.pesel)
+            _h = 5 * _h + Ice.getHash(self.type)
+            return _h % 0x7fffffff
+
+        def __compare(self, other):
+            if other is None:
+                return 1
+            elif not isinstance(other, _M_ClientBank.AccountKey):
+                return NotImplemented
+            else:
+                if self.pesel is None or other.pesel is None:
+                    if self.pesel != other.pesel:
+                        return (-1 if self.pesel is None else 1)
+                else:
+                    if self.pesel < other.pesel:
+                        return -1
+                    elif self.pesel > other.pesel:
+                        return 1
+                if self.type is None or other.type is None:
+                    if self.type != other.type:
+                        return (-1 if self.type is None else 1)
+                else:
+                    if self.type < other.type:
+                        return -1
+                    elif self.type > other.type:
+                        return 1
+                return 0
+
+        def __lt__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r < 0
+
+        def __le__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r <= 0
+
+        def __gt__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r > 0
+
+        def __ge__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r >= 0
+
+        def __eq__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r == 0
+
+        def __ne__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r != 0
+
+        def __str__(self):
+            return IcePy.stringify(self, _M_ClientBank._t_AccountKey)
+
+        __repr__ = __str__
+
+    _M_ClientBank._t_AccountKey = IcePy.defineStruct('::ClientBank::AccountKey', AccountKey, (), (
+        ('pesel', (), IcePy._t_string),
+        ('type', (), _M_ClientBank._t_Type)
+    ))
+
+    _M_ClientBank.AccountKey = AccountKey
+    del AccountKey
+
 if 'AccountUser' not in _M_ClientBank.__dict__:
     _M_ClientBank.AccountUser = Ice.createTempClass()
     class AccountUser(object):
-        def __init__(self, name='', surname='', pesel=0, type=_M_ClientBank.Type.STANDARD, password=''):
+        def __init__(self, name='', surname='', pesel='', type=_M_ClientBank.Type.STANDARD, password=''):
             self.name = name
             self.surname = surname
             self.pesel = pesel
@@ -308,7 +396,7 @@ if 'AccountUser' not in _M_ClientBank.__dict__:
     _M_ClientBank._t_AccountUser = IcePy.defineStruct('::ClientBank::AccountUser', AccountUser, (), (
         ('name', (), IcePy._t_string),
         ('surname', (), IcePy._t_string),
-        ('pesel', (), IcePy._t_long),
+        ('pesel', (), IcePy._t_string),
         ('type', (), _M_ClientBank._t_Type),
         ('password', (), IcePy._t_string)
     ))
@@ -316,212 +404,15 @@ if 'AccountUser' not in _M_ClientBank.__dict__:
     _M_ClientBank.AccountUser = AccountUser
     del AccountUser
 
-if 'DateTime' not in _M_ClientBank.__dict__:
-    _M_ClientBank.DateTime = Ice.createTempClass()
-    class DateTime(object):
-        def __init__(self, Year=0, Month=0, Day=0, Hour=0, Minute=0, Second=0):
-            self.Year = Year
-            self.Month = Month
-            self.Day = Day
-            self.Hour = Hour
-            self.Minute = Minute
-            self.Second = Second
-
-        def __hash__(self):
-            _h = 0
-            _h = 5 * _h + Ice.getHash(self.Year)
-            _h = 5 * _h + Ice.getHash(self.Month)
-            _h = 5 * _h + Ice.getHash(self.Day)
-            _h = 5 * _h + Ice.getHash(self.Hour)
-            _h = 5 * _h + Ice.getHash(self.Minute)
-            _h = 5 * _h + Ice.getHash(self.Second)
-            return _h % 0x7fffffff
-
-        def __compare(self, other):
-            if other is None:
-                return 1
-            elif not isinstance(other, _M_ClientBank.DateTime):
-                return NotImplemented
-            else:
-                if self.Year is None or other.Year is None:
-                    if self.Year != other.Year:
-                        return (-1 if self.Year is None else 1)
-                else:
-                    if self.Year < other.Year:
-                        return -1
-                    elif self.Year > other.Year:
-                        return 1
-                if self.Month is None or other.Month is None:
-                    if self.Month != other.Month:
-                        return (-1 if self.Month is None else 1)
-                else:
-                    if self.Month < other.Month:
-                        return -1
-                    elif self.Month > other.Month:
-                        return 1
-                if self.Day is None or other.Day is None:
-                    if self.Day != other.Day:
-                        return (-1 if self.Day is None else 1)
-                else:
-                    if self.Day < other.Day:
-                        return -1
-                    elif self.Day > other.Day:
-                        return 1
-                if self.Hour is None or other.Hour is None:
-                    if self.Hour != other.Hour:
-                        return (-1 if self.Hour is None else 1)
-                else:
-                    if self.Hour < other.Hour:
-                        return -1
-                    elif self.Hour > other.Hour:
-                        return 1
-                if self.Minute is None or other.Minute is None:
-                    if self.Minute != other.Minute:
-                        return (-1 if self.Minute is None else 1)
-                else:
-                    if self.Minute < other.Minute:
-                        return -1
-                    elif self.Minute > other.Minute:
-                        return 1
-                if self.Second is None or other.Second is None:
-                    if self.Second != other.Second:
-                        return (-1 if self.Second is None else 1)
-                else:
-                    if self.Second < other.Second:
-                        return -1
-                    elif self.Second > other.Second:
-                        return 1
-                return 0
-
-        def __lt__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r < 0
-
-        def __le__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r <= 0
-
-        def __gt__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r > 0
-
-        def __ge__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r >= 0
-
-        def __eq__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r == 0
-
-        def __ne__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r != 0
-
-        def __str__(self):
-            return IcePy.stringify(self, _M_ClientBank._t_DateTime)
-
-        __repr__ = __str__
-
-    _M_ClientBank._t_DateTime = IcePy.defineStruct('::ClientBank::DateTime', DateTime, (), (
-        ('Year', (), IcePy._t_int),
-        ('Month', (), IcePy._t_byte),
-        ('Day', (), IcePy._t_byte),
-        ('Hour', (), IcePy._t_byte),
-        ('Minute', (), IcePy._t_byte),
-        ('Second', (), IcePy._t_byte)
-    ))
-
-    _M_ClientBank.DateTime = DateTime
-    del DateTime
-
-if 'Loan' not in _M_ClientBank.__dict__:
-    _M_ClientBank.Loan = Ice.createTempClass()
-    class Loan(object):
-        def __init__(self, valuePLN=0.0, value=0.0, Currency=_M_ClientBank.Currency.EUR, taken=Ice._struct_marker, expected=Ice._struct_marker, loanPercent=0.0):
-            self.valuePLN = valuePLN
-            self.value = value
-            self.Currency = Currency
-            if taken is Ice._struct_marker:
-                self.taken = _M_ClientBank.DateTime()
-            else:
-                self.taken = taken
-            if expected is Ice._struct_marker:
-                self.expected = _M_ClientBank.DateTime()
-            else:
-                self.expected = expected
-            self.loanPercent = loanPercent
-
-        def __eq__(self, other):
-            if other is None:
-                return False
-            elif not isinstance(other, _M_ClientBank.Loan):
-                return NotImplemented
-            else:
-                if self.valuePLN != other.valuePLN:
-                    return False
-                if self.value != other.value:
-                    return False
-                if self.Currency != other.Currency:
-                    return False
-                if self.taken != other.taken:
-                    return False
-                if self.expected != other.expected:
-                    return False
-                if self.loanPercent != other.loanPercent:
-                    return False
-                return True
-
-        def __ne__(self, other):
-            return not self.__eq__(other)
-
-        def __str__(self):
-            return IcePy.stringify(self, _M_ClientBank._t_Loan)
-
-        __repr__ = __str__
-
-    _M_ClientBank._t_Loan = IcePy.defineStruct('::ClientBank::Loan', Loan, (), (
-        ('valuePLN', (), IcePy._t_double),
-        ('value', (), IcePy._t_double),
-        ('Currency', (), _M_ClientBank._t_Currency),
-        ('taken', (), _M_ClientBank._t_DateTime),
-        ('expected', (), _M_ClientBank._t_DateTime),
-        ('loanPercent', (), IcePy._t_double)
-    ))
-
-    _M_ClientBank.Loan = Loan
-    del Loan
-
-if '_t_Loans' not in _M_ClientBank.__dict__:
-    _M_ClientBank._t_Loans = IcePy.defineSequence('::ClientBank::Loans', (), _M_ClientBank._t_Loan)
-
 if 'AccountBank' not in _M_ClientBank.__dict__:
     _M_ClientBank.AccountBank = Ice.createTempClass()
     class AccountBank(object):
-        def __init__(self, account=Ice._struct_marker, value=0.0, loans=None):
-            if account is Ice._struct_marker:
-                self.account = _M_ClientBank.AccountUser()
+        def __init__(self, accountUser=Ice._struct_marker, value=0.0):
+            if accountUser is Ice._struct_marker:
+                self.accountUser = _M_ClientBank.AccountUser()
             else:
-                self.account = account
+                self.accountUser = accountUser
             self.value = value
-            self.loans = loans
 
         def __eq__(self, other):
             if other is None:
@@ -529,11 +420,9 @@ if 'AccountBank' not in _M_ClientBank.__dict__:
             elif not isinstance(other, _M_ClientBank.AccountBank):
                 return NotImplemented
             else:
-                if self.account != other.account:
+                if self.accountUser != other.accountUser:
                     return False
                 if self.value != other.value:
-                    return False
-                if self.loans != other.loans:
                     return False
                 return True
 
@@ -546,9 +435,8 @@ if 'AccountBank' not in _M_ClientBank.__dict__:
         __repr__ = __str__
 
     _M_ClientBank._t_AccountBank = IcePy.defineStruct('::ClientBank::AccountBank', AccountBank, (), (
-        ('account', (), _M_ClientBank._t_AccountUser),
-        ('value', (), IcePy._t_double),
-        ('loans', (), _M_ClientBank._t_Loans)
+        ('accountUser', (), _M_ClientBank._t_AccountUser),
+        ('value', (), IcePy._t_float)
     ))
 
     _M_ClientBank.AccountBank = AccountBank
@@ -560,41 +448,17 @@ if 'StandardAccountPrx' not in _M_ClientBank.__dict__:
     _M_ClientBank.StandardAccountPrx = Ice.createTempClass()
     class StandardAccountPrx(Ice.ObjectPrx):
 
-        def getAccountValue(self, pesel, password, context=None):
-            return _M_ClientBank.StandardAccount._op_getAccountValue.invoke(self, ((pesel, password), context))
+        def getAccountBalance(self, context=None):
+            return _M_ClientBank.StandardAccount._op_getAccountBalance.invoke(self, ((), context))
 
-        def getAccountValueAsync(self, pesel, password, context=None):
-            return _M_ClientBank.StandardAccount._op_getAccountValue.invokeAsync(self, ((pesel, password), context))
+        def getAccountBalanceAsync(self, context=None):
+            return _M_ClientBank.StandardAccount._op_getAccountBalance.invokeAsync(self, ((), context))
 
-        def begin_getAccountValue(self, pesel, password, _response=None, _ex=None, _sent=None, context=None):
-            return _M_ClientBank.StandardAccount._op_getAccountValue.begin(self, ((pesel, password), _response, _ex, _sent, context))
+        def begin_getAccountBalance(self, _response=None, _ex=None, _sent=None, context=None):
+            return _M_ClientBank.StandardAccount._op_getAccountBalance.begin(self, ((), _response, _ex, _sent, context))
 
-        def end_getAccountValue(self, _r):
-            return _M_ClientBank.StandardAccount._op_getAccountValue.end(self, _r)
-
-        def depositMoney(self, value, context=None):
-            return _M_ClientBank.StandardAccount._op_depositMoney.invoke(self, ((value, ), context))
-
-        def depositMoneyAsync(self, value, context=None):
-            return _M_ClientBank.StandardAccount._op_depositMoney.invokeAsync(self, ((value, ), context))
-
-        def begin_depositMoney(self, value, _response=None, _ex=None, _sent=None, context=None):
-            return _M_ClientBank.StandardAccount._op_depositMoney.begin(self, ((value, ), _response, _ex, _sent, context))
-
-        def end_depositMoney(self, _r):
-            return _M_ClientBank.StandardAccount._op_depositMoney.end(self, _r)
-
-        def withdrawMoney(self, value, context=None):
-            return _M_ClientBank.StandardAccount._op_withdrawMoney.invoke(self, ((value, ), context))
-
-        def withdrawMoneyAsync(self, value, context=None):
-            return _M_ClientBank.StandardAccount._op_withdrawMoney.invokeAsync(self, ((value, ), context))
-
-        def begin_withdrawMoney(self, value, _response=None, _ex=None, _sent=None, context=None):
-            return _M_ClientBank.StandardAccount._op_withdrawMoney.begin(self, ((value, ), _response, _ex, _sent, context))
-
-        def end_withdrawMoney(self, _r):
-            return _M_ClientBank.StandardAccount._op_withdrawMoney.end(self, _r)
+        def end_getAccountBalance(self, _r):
+            return _M_ClientBank.StandardAccount._op_getAccountBalance.end(self, _r)
 
         @staticmethod
         def checkedCast(proxy, facetOrContext=None, context=None):
@@ -625,14 +489,8 @@ if 'StandardAccountPrx' not in _M_ClientBank.__dict__:
         def ice_staticId():
             return '::ClientBank::StandardAccount'
 
-        def getAccountValue(self, pesel, password, current=None):
-            raise NotImplementedError("servant method 'getAccountValue' not implemented")
-
-        def depositMoney(self, value, current=None):
-            raise NotImplementedError("servant method 'depositMoney' not implemented")
-
-        def withdrawMoney(self, value, current=None):
-            raise NotImplementedError("servant method 'withdrawMoney' not implemented")
+        def getAccountBalance(self, current=None):
+            raise NotImplementedError("servant method 'getAccountBalance' not implemented")
 
         def __str__(self):
             return IcePy.stringify(self, _M_ClientBank._t_StandardAccountDisp)
@@ -642,9 +500,7 @@ if 'StandardAccountPrx' not in _M_ClientBank.__dict__:
     _M_ClientBank._t_StandardAccountDisp = IcePy.defineClass('::ClientBank::StandardAccount', StandardAccount, (), None, ())
     StandardAccount._ice_type = _M_ClientBank._t_StandardAccountDisp
 
-    StandardAccount._op_getAccountValue = IcePy.Operation('getAccountValue', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_long, False, 0), ((), IcePy._t_string, False, 0)), (), ((), IcePy._t_double, False, 0), (_M_ClientBank._t_UnauthorizedErr,))
-    StandardAccount._op_depositMoney = IcePy.Operation('depositMoney', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_double, False, 0),), (), None, (_M_ClientBank._t_UnauthorizedErr,))
-    StandardAccount._op_withdrawMoney = IcePy.Operation('withdrawMoney', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_double, False, 0),), (), None, (_M_ClientBank._t_UnauthorizedErr, _M_ClientBank._t_WithdrawErr))
+    StandardAccount._op_getAccountBalance = IcePy.Operation('getAccountBalance', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (), (), ((), IcePy._t_float, False, 0), (_M_ClientBank._t_UnauthorizedErr,))
 
     _M_ClientBank.StandardAccount = StandardAccount
     del StandardAccount
@@ -707,7 +563,7 @@ if 'PremiumAccountPrx' not in _M_ClientBank.__dict__:
     _M_ClientBank._t_PremiumAccountDisp = IcePy.defineClass('::ClientBank::PremiumAccount', PremiumAccount, (), None, (_M_ClientBank._t_StandardAccountDisp,))
     PremiumAccount._ice_type = _M_ClientBank._t_PremiumAccountDisp
 
-    PremiumAccount._op_getLoan = IcePy.Operation('getLoan', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_long, False, 0), ((), IcePy._t_string, False, 0), ((), IcePy._t_double, False, 0), ((), _M_ClientBank._t_Currency, False, 0)), (), ((), _M_ClientBank._t_LoanResponse, False, 0), (_M_ClientBank._t_UnauthorizedErr, _M_ClientBank._t_LoanRefusalErr))
+    PremiumAccount._op_getLoan = IcePy.Operation('getLoan', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_string, False, 0), ((), IcePy._t_string, False, 0), ((), IcePy._t_float, False, 0), ((), _M_ClientBank._t_Currency, False, 0)), (), ((), _M_ClientBank._t_LoanResponse, False, 0), (_M_ClientBank._t_UnauthorizedErr, _M_ClientBank._t_LoanRefusalErr))
 
     _M_ClientBank.PremiumAccount = PremiumAccount
     del PremiumAccount
@@ -804,6 +660,41 @@ if 'RegistrationResponse' not in _M_ClientBank.__dict__:
     _M_ClientBank.RegistrationResponse = RegistrationResponse
     del RegistrationResponse
 
+if 'LoginResponse' not in _M_ClientBank.__dict__:
+    _M_ClientBank.LoginResponse = Ice.createTempClass()
+    class LoginResponse(object):
+        def __init__(self, type=_M_ClientBank.Type.STANDARD, accountAdministrator=None):
+            self.type = type
+            self.accountAdministrator = accountAdministrator
+
+        def __eq__(self, other):
+            if other is None:
+                return False
+            elif not isinstance(other, _M_ClientBank.LoginResponse):
+                return NotImplemented
+            else:
+                if self.type != other.type:
+                    return False
+                if self.accountAdministrator != other.accountAdministrator:
+                    return False
+                return True
+
+        def __ne__(self, other):
+            return not self.__eq__(other)
+
+        def __str__(self):
+            return IcePy.stringify(self, _M_ClientBank._t_LoginResponse)
+
+        __repr__ = __str__
+
+    _M_ClientBank._t_LoginResponse = IcePy.defineStruct('::ClientBank::LoginResponse', LoginResponse, (), (
+        ('type', (), _M_ClientBank._t_Type),
+        ('accountAdministrator', (), _M_ClientBank._t_StandardAccountPrx)
+    ))
+
+    _M_ClientBank.LoginResponse = LoginResponse
+    del LoginResponse
+
 _M_ClientBank._t_UsersRegistration = IcePy.defineValue('::ClientBank::UsersRegistration', Ice.Value, -1, (), False, True, None, ())
 
 if 'UsersRegistrationPrx' not in _M_ClientBank.__dict__:
@@ -821,6 +712,18 @@ if 'UsersRegistrationPrx' not in _M_ClientBank.__dict__:
 
         def end_register(self, _r):
             return _M_ClientBank.UsersRegistration._op_register.end(self, _r)
+
+        def login(self, pesel, password, context=None):
+            return _M_ClientBank.UsersRegistration._op_login.invoke(self, ((pesel, password), context))
+
+        def loginAsync(self, pesel, password, context=None):
+            return _M_ClientBank.UsersRegistration._op_login.invokeAsync(self, ((pesel, password), context))
+
+        def begin_login(self, pesel, password, _response=None, _ex=None, _sent=None, context=None):
+            return _M_ClientBank.UsersRegistration._op_login.begin(self, ((pesel, password), _response, _ex, _sent, context))
+
+        def end_login(self, _r):
+            return _M_ClientBank.UsersRegistration._op_login.end(self, _r)
 
         @staticmethod
         def checkedCast(proxy, facetOrContext=None, context=None):
@@ -854,6 +757,9 @@ if 'UsersRegistrationPrx' not in _M_ClientBank.__dict__:
         def register(self, name, surname, pesel, income, current=None):
             raise NotImplementedError("servant method 'register' not implemented")
 
+        def login(self, pesel, password, current=None):
+            raise NotImplementedError("servant method 'login' not implemented")
+
         def __str__(self):
             return IcePy.stringify(self, _M_ClientBank._t_UsersRegistrationDisp)
 
@@ -862,7 +768,8 @@ if 'UsersRegistrationPrx' not in _M_ClientBank.__dict__:
     _M_ClientBank._t_UsersRegistrationDisp = IcePy.defineClass('::ClientBank::UsersRegistration', UsersRegistration, (), None, ())
     UsersRegistration._ice_type = _M_ClientBank._t_UsersRegistrationDisp
 
-    UsersRegistration._op_register = IcePy.Operation('register', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_string, False, 0), ((), IcePy._t_string, False, 0), ((), IcePy._t_long, False, 0), ((), IcePy._t_double, False, 0)), (), None, (_M_ClientBank._t_RegistrationErr,))
+    UsersRegistration._op_register = IcePy.Operation('register', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_string, False, 0), ((), IcePy._t_string, False, 0), ((), IcePy._t_string, False, 0), ((), IcePy._t_float, False, 0)), (), ((), _M_ClientBank._t_RegistrationResponse, False, 0), (_M_ClientBank._t_RegistrationErr,))
+    UsersRegistration._op_login = IcePy.Operation('login', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_string, False, 0), ((), IcePy._t_string, False, 0)), (), ((), _M_ClientBank._t_LoginResponse, False, 0), (_M_ClientBank._t_UnauthorizedErr,))
 
     _M_ClientBank.UsersRegistration = UsersRegistration
     del UsersRegistration

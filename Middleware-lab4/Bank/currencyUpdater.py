@@ -23,6 +23,7 @@ class CurrencyUpdater():
         print(self.enumCurrencies)
         if(ClientBank.Currency.PLN not in self.enumCurrencies):
             self.enumCurrencies.append(ClientBank.Currency.PLN)
+            
         self.courrenciesDict = dict()
         for enumCurrency in self.enumCurrencies:
             if enumCurrency == ClientBank.Currency.PLN:

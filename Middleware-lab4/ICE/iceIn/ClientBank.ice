@@ -2,20 +2,19 @@ module ClientBank{
 
     exception UnauthorizedErr{
         string msg;
-    }
+    };
 
     exception RegistrationErr{
-        long pesel;
         string msg;
-    }
+    };
 
     exception LoanRefusalErr{
         string msg;
-    }
+    };
 
     exception WithdrawErr{
         string msg;
-    }
+    };
 
     enum Type{
         STANDARD =1,
@@ -31,62 +30,50 @@ module ClientBank{
     };
 
     struct LoanResponse{
-        double valuePLN;
-        double currencyValue;
+        float valuePLN;
+        float currencyValue;
         Currency currency;
-        double loanPercent;
+        float loanPercent;
+    };
+
+    struct AccountKey{
+        string pesel;
+        Type type;
     };
 
     struct AccountUser{
         string name;
         string surname;
-        long pesel;
+        string pesel;
         Type type;
         string password;
     };
 
-    struct DateTime{
-        int Year;
-		byte Month;
-		byte Day;
-		byte Hour;
-		byte Minute;
-		byte Second;
-    };
-
-    struct Loan{
-        double valuePLN;
-        double value;
-        Currency Currency;
-        DateTime taken;
-        DateTime expected;
-        double loanPercent;
-    };
-
-    sequence<Loan> Loans;
-
     struct AccountBank{
-        AccountUser account;
-        double value;
-        Loans loans;
+        AccountUser accountUser;
+        float value;
     };
 
     interface StandardAccount{
-        double getAccountValue(long pesel, string password) throws UnauthorizedErr;
-        void depositMoney (double value) throws UnauthorizedErr;
-        void withdrawMoney (double value) throws UnauthorizedErr, WithdrawErr;
+        float getAccountBalance() throws UnauthorizedErr;
     };
 
     interface PremiumAccount extends StandardAccount{
-        LoanResponse getLoan(long pesel, string password, double value, Currency currency) throws UnauthorizedErr, LoanRefusalErr;
-    }
+        LoanResponse getLoan(string pesel, string password, float value, Currency currency) throws UnauthorizedErr, LoanRefusalErr;
+    };
 
     struct RegistrationResponse{
         string password;
         Type type;
     };
+    
+    struct LoginResponse{
+        Type type;
+        StandardAccount* accountAdministrator;
+    };
 
     interface UsersRegistration{
-        void register(string name, string surname, long pesel, double income) throws RegistrationErr;
+        RegistrationResponse register(string name, string surname, string pesel, float income) throws RegistrationErr;
+        LoginResponse login(string pesel, string password) throws UnauthorizedErr;
     };
 };
