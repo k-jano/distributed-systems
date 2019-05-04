@@ -7,10 +7,11 @@ from usersDict import UsersDict
 from account import StandardAccountManagerI, PremiumAccountManagerI
 import random
 import string
+import threading
 
-THRESHOLD = 3000
-PASSWD_LONG = 5
-PESEL_LEN = 5
+PASSWD_LEN = 3
+PESEL_LEN = 3
+THRESHOLD = 1000
 
 class BankManagerI(ClientBank.UsersRegistration):
     def __init__(self, currencyUpdater, UsersDict, adapter, communicator):
@@ -18,10 +19,28 @@ class BankManagerI(ClientBank.UsersRegistration):
         self._usersDict = UsersDict
         self._adapter = adapter
         self._communicator = communicator
+        x =threading.Thread(target=self._currencyUpdater.currencyUpdaterRoutine)
+        x.start()
 
-    def passwdGenerate(self):
+
+    def passwdGenerate(self, pesel, clientType):
+        if clientType == ClientBank.Type.STANDARD:
+            searchedType = ClientBank.Type.PREMIUM
+        else:
+            searchedType = ClientBank.Type.STANDARD
+        
+        usersDict = self._usersDict.getDict()
+        searchedKey = ClientBank.AccountKey(pesel, searchedType)
+        if searchedKey in usersDict.keys():
+            password = usersDict.get(searchedKey).AccountUser.password
+        else:
+            password = ''
+
         letters = string.ascii_lowercase
-        return ''.join(random.choice(letters) for i in range(PASSWD_LONG))
+        generated = ''.join(random.choice(letters) for i in range(PASSWD_LEN))
+        while generated == password:
+            generated = ''.join(random.choice(letters) for i in range(PASSWD_LEN))
+        return generated
 
 
     def login(self, pesel, password, current=None):
@@ -42,18 +61,13 @@ class BankManagerI(ClientBank.UsersRegistration):
 
         clientType = usersDict.get(key).accountUser.type
         clientID = pesel + str(clientType.value)
-        if (clientType == ClientBank.Type.STANDARD):
-            accountI = StandardAccountManagerI(clientID)
-        else:
-            accountI = PremiumAccountManagerI(clientID)
-        
-        
+          
         base = current.adapter.createProxy(Ice.stringToIdentity(clientID))
 
         if(clientType == ClientBank.Type.STANDARD):
-            newI =  ClientBank.StandardAccountPrx.checkedCast(base)
+            newI =  ClientBank.StandardAccountPrx.uncheckedCast(base)
         else:
-            newI = ClientBank.PremiumAccountPrx.checkedCast(base)
+            newI = ClientBank.PremiumAccountPrx.uncheckedCast(base)
 
         return ClientBank.LoginResponse(clientType, newI)
         
@@ -76,16 +90,16 @@ class BankManagerI(ClientBank.UsersRegistration):
         if key in list(usersDict.keys()):
             raise ClientBank.RegistrationErr('Client already exist')
 
-        password = self.passwdGenerate()
+        password = self.passwdGenerate(pesel, clientType)
         objUser = ClientBank.AccountUser(name, surname, pesel, clientType, password)
-        objBank = ClientBank.AccountBank(objUser, 0)
+        objBank = ClientBank.AccountBank(objUser, income)
         self._usersDict.update(key, objBank)
         clientID = pesel + str(clientType.value)
 
         if (clientType == ClientBank.Type.STANDARD):
-            accountI = StandardAccountManagerI(clientID)
+            accountI = StandardAccountManagerI(clientID, pesel, clientType, self._usersDict, self._currencyUpdater)
         else:
-            accountI = PremiumAccountManagerI(clientID)
+            accountI = PremiumAccountManagerI(clientID, pesel, clientType, self._usersDict, self._currencyUpdater)
         self._adapter.add(accountI, self._communicator.stringToIdentity(clientID))
 
         

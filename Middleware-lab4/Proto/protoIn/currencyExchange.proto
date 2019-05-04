@@ -1,10 +1,14 @@
 syntax="proto3";
-option java_multiple_files = true;
 package currencyEx;
 
 service currencyService{
     rpc addBank(Subscribe) returns (stream AckCur);
     rpc removeBank(Unsubscribe) returns (AckEmpt);
+    rpc print(AckEmpt) returns(AckPrint);
+}
+
+message AckPrint{
+    string msg =1;
 }
 
 message AckEmpt{
@@ -30,4 +34,5 @@ enum Currency{
     USD=1;
     CHF=2;
     GPB=3;
+    PLN=4;
 }

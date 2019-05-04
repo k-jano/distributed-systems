@@ -1,9 +1,11 @@
-var PROTO_PATH = __dirname + "/../Proto/currencyExchange.proto";
+var PROTO_PATH = __dirname + "/../Proto/protoIn/currencyExchange.proto";
 var grpc = require("grpc");
 var protoLoader = require("@grpc/proto-loader");
 
 const HOST = "127.0.0.1";
 const PORT = "50051";
+const TIME = 5000;
+
 var packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
   longs: String,
@@ -13,10 +15,10 @@ var packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 });
 
 var mapCurr = {
-  EUR: 4,
-  USD: 3,
-  CHF: 4,
-  GBP: 5
+  EUR: 5,
+  USD: 6,
+  CHF: 7,
+  GBP: 8
 };
 
 var currSubscribers = {
@@ -36,12 +38,12 @@ function addSubsriber(id, curs) {
     if (!isInList) {
       list.push(id);
     }
-
     currSubscribers.set(cur, list);
   }
 }
 
 function addBank(call) {
+  console.log("Request")
   var id = call.request.id;
   var curs = call.request.curs;
   addSubsriber(id, curs);
@@ -53,14 +55,32 @@ function addBank(call) {
   }
 }
 
-function removeBank(call) {}
+function removeBank(call) {
+  var id = call.request.id;
+  for (var key in currSubscribers){
+    var list = currSubscribers[key]
+    for (var i=0; i< list.length; i++){
+      if (list[i]==id)
+        list.splice(i, 1)
+    }
+  }
+  call.write({
+   
+  })
+}
+
+function print(call, callback){
+  console.log('Catched print')
+  callback(null, {msg: 'Hi from grpc'})
+}
 
 var protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
-var routeguide = protoDescriptor.currencyEx;
+var currencyEx = protoDescriptor.currencyEx;
 var server = new grpc.Server();
-server.addService(routeguide.currencyService.service, {
+server.addService(currencyEx.currencyService.service, {
   addBank: addBank,
-  removeBank: removeBank
+  removeBank: removeBank,
+  print: print
 });
 
 server.bind(HOST + ":" + PORT, grpc.ServerCredentials.createInsecure());

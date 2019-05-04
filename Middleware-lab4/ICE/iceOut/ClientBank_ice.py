@@ -78,25 +78,6 @@ if 'LoanRefusalErr' not in _M_ClientBank.__dict__:
     _M_ClientBank.LoanRefusalErr = LoanRefusalErr
     del LoanRefusalErr
 
-if 'WithdrawErr' not in _M_ClientBank.__dict__:
-    _M_ClientBank.WithdrawErr = Ice.createTempClass()
-    class WithdrawErr(Ice.UserException):
-        def __init__(self, msg=''):
-            self.msg = msg
-
-        def __str__(self):
-            return IcePy.stringifyException(self)
-
-        __repr__ = __str__
-
-        _ice_id = '::ClientBank::WithdrawErr'
-
-    _M_ClientBank._t_WithdrawErr = IcePy.defineException('::ClientBank::WithdrawErr', WithdrawErr, (), False, None, (('msg', (), IcePy._t_string, False, 0),))
-    WithdrawErr._ice_type = _M_ClientBank._t_WithdrawErr
-
-    _M_ClientBank.WithdrawErr = WithdrawErr
-    del WithdrawErr
-
 if 'Type' not in _M_ClientBank.__dict__:
     _M_ClientBank.Type = Ice.createTempClass()
     class Type(Ice.EnumBase):
@@ -147,11 +128,11 @@ if 'Currency' not in _M_ClientBank.__dict__:
 if 'LoanResponse' not in _M_ClientBank.__dict__:
     _M_ClientBank.LoanResponse = Ice.createTempClass()
     class LoanResponse(object):
-        def __init__(self, valuePLN=0.0, currencyValue=0.0, currency=_M_ClientBank.Currency.EUR, loanPercent=0.0):
+        def __init__(self, valuePLN=0.0, currencyValue=0.0, currency=_M_ClientBank.Currency.EUR, exchange=0.0):
             self.valuePLN = valuePLN
             self.currencyValue = currencyValue
             self.currency = currency
-            self.loanPercent = loanPercent
+            self.exchange = exchange
 
         def __eq__(self, other):
             if other is None:
@@ -165,7 +146,7 @@ if 'LoanResponse' not in _M_ClientBank.__dict__:
                     return False
                 if self.currency != other.currency:
                     return False
-                if self.loanPercent != other.loanPercent:
+                if self.exchange != other.exchange:
                     return False
                 return True
 
@@ -181,7 +162,7 @@ if 'LoanResponse' not in _M_ClientBank.__dict__:
         ('valuePLN', (), IcePy._t_float),
         ('currencyValue', (), IcePy._t_float),
         ('currency', (), _M_ClientBank._t_Currency),
-        ('loanPercent', (), IcePy._t_float)
+        ('exchange', (), IcePy._t_float)
     ))
 
     _M_ClientBank.LoanResponse = LoanResponse
@@ -442,6 +423,109 @@ if 'AccountBank' not in _M_ClientBank.__dict__:
     _M_ClientBank.AccountBank = AccountBank
     del AccountBank
 
+if 'Date' not in _M_ClientBank.__dict__:
+    _M_ClientBank.Date = Ice.createTempClass()
+    class Date(object):
+        def __init__(self, year=0, month=0, day=0):
+            self.year = year
+            self.month = month
+            self.day = day
+
+        def __hash__(self):
+            _h = 0
+            _h = 5 * _h + Ice.getHash(self.year)
+            _h = 5 * _h + Ice.getHash(self.month)
+            _h = 5 * _h + Ice.getHash(self.day)
+            return _h % 0x7fffffff
+
+        def __compare(self, other):
+            if other is None:
+                return 1
+            elif not isinstance(other, _M_ClientBank.Date):
+                return NotImplemented
+            else:
+                if self.year is None or other.year is None:
+                    if self.year != other.year:
+                        return (-1 if self.year is None else 1)
+                else:
+                    if self.year < other.year:
+                        return -1
+                    elif self.year > other.year:
+                        return 1
+                if self.month is None or other.month is None:
+                    if self.month != other.month:
+                        return (-1 if self.month is None else 1)
+                else:
+                    if self.month < other.month:
+                        return -1
+                    elif self.month > other.month:
+                        return 1
+                if self.day is None or other.day is None:
+                    if self.day != other.day:
+                        return (-1 if self.day is None else 1)
+                else:
+                    if self.day < other.day:
+                        return -1
+                    elif self.day > other.day:
+                        return 1
+                return 0
+
+        def __lt__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r < 0
+
+        def __le__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r <= 0
+
+        def __gt__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r > 0
+
+        def __ge__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r >= 0
+
+        def __eq__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r == 0
+
+        def __ne__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r != 0
+
+        def __str__(self):
+            return IcePy.stringify(self, _M_ClientBank._t_Date)
+
+        __repr__ = __str__
+
+    _M_ClientBank._t_Date = IcePy.defineStruct('::ClientBank::Date', Date, (), (
+        ('year', (), IcePy._t_int),
+        ('month', (), IcePy._t_int),
+        ('day', (), IcePy._t_int)
+    ))
+
+    _M_ClientBank.Date = Date
+    del Date
+
 _M_ClientBank._t_StandardAccount = IcePy.defineValue('::ClientBank::StandardAccount', Ice.Value, -1, (), False, True, None, ())
 
 if 'StandardAccountPrx' not in _M_ClientBank.__dict__:
@@ -500,7 +584,7 @@ if 'StandardAccountPrx' not in _M_ClientBank.__dict__:
     _M_ClientBank._t_StandardAccountDisp = IcePy.defineClass('::ClientBank::StandardAccount', StandardAccount, (), None, ())
     StandardAccount._ice_type = _M_ClientBank._t_StandardAccountDisp
 
-    StandardAccount._op_getAccountBalance = IcePy.Operation('getAccountBalance', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (), (), ((), IcePy._t_float, False, 0), (_M_ClientBank._t_UnauthorizedErr,))
+    StandardAccount._op_getAccountBalance = IcePy.Operation('getAccountBalance', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (), (), ((), IcePy._t_float, False, 0), ())
 
     _M_ClientBank.StandardAccount = StandardAccount
     del StandardAccount
@@ -511,14 +595,14 @@ if 'PremiumAccountPrx' not in _M_ClientBank.__dict__:
     _M_ClientBank.PremiumAccountPrx = Ice.createTempClass()
     class PremiumAccountPrx(_M_ClientBank.StandardAccountPrx):
 
-        def getLoan(self, pesel, password, value, currency, context=None):
-            return _M_ClientBank.PremiumAccount._op_getLoan.invoke(self, ((pesel, password, value, currency), context))
+        def getLoan(self, value, currency, date, context=None):
+            return _M_ClientBank.PremiumAccount._op_getLoan.invoke(self, ((value, currency, date), context))
 
-        def getLoanAsync(self, pesel, password, value, currency, context=None):
-            return _M_ClientBank.PremiumAccount._op_getLoan.invokeAsync(self, ((pesel, password, value, currency), context))
+        def getLoanAsync(self, value, currency, date, context=None):
+            return _M_ClientBank.PremiumAccount._op_getLoan.invokeAsync(self, ((value, currency, date), context))
 
-        def begin_getLoan(self, pesel, password, value, currency, _response=None, _ex=None, _sent=None, context=None):
-            return _M_ClientBank.PremiumAccount._op_getLoan.begin(self, ((pesel, password, value, currency), _response, _ex, _sent, context))
+        def begin_getLoan(self, value, currency, date, _response=None, _ex=None, _sent=None, context=None):
+            return _M_ClientBank.PremiumAccount._op_getLoan.begin(self, ((value, currency, date), _response, _ex, _sent, context))
 
         def end_getLoan(self, _r):
             return _M_ClientBank.PremiumAccount._op_getLoan.end(self, _r)
@@ -552,7 +636,7 @@ if 'PremiumAccountPrx' not in _M_ClientBank.__dict__:
         def ice_staticId():
             return '::ClientBank::PremiumAccount'
 
-        def getLoan(self, pesel, password, value, currency, current=None):
+        def getLoan(self, value, currency, date, current=None):
             raise NotImplementedError("servant method 'getLoan' not implemented")
 
         def __str__(self):
@@ -563,7 +647,7 @@ if 'PremiumAccountPrx' not in _M_ClientBank.__dict__:
     _M_ClientBank._t_PremiumAccountDisp = IcePy.defineClass('::ClientBank::PremiumAccount', PremiumAccount, (), None, (_M_ClientBank._t_StandardAccountDisp,))
     PremiumAccount._ice_type = _M_ClientBank._t_PremiumAccountDisp
 
-    PremiumAccount._op_getLoan = IcePy.Operation('getLoan', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_string, False, 0), ((), IcePy._t_string, False, 0), ((), IcePy._t_float, False, 0), ((), _M_ClientBank._t_Currency, False, 0)), (), ((), _M_ClientBank._t_LoanResponse, False, 0), (_M_ClientBank._t_UnauthorizedErr, _M_ClientBank._t_LoanRefusalErr))
+    PremiumAccount._op_getLoan = IcePy.Operation('getLoan', Ice.OperationMode.Normal, Ice.OperationMode.Normal, False, None, (), (((), IcePy._t_float, False, 0), ((), _M_ClientBank._t_Currency, False, 0), ((), _M_ClientBank._t_Date, False, 0)), (), ((), _M_ClientBank._t_LoanResponse, False, 0), (_M_ClientBank._t_LoanRefusalErr,))
 
     _M_ClientBank.PremiumAccount = PremiumAccount
     del PremiumAccount

@@ -16,12 +16,38 @@ class ClientI:
             self._bank = bank
 
     def getAccountBalance(self):
-        #ctx = {'login': self._pesel, 'clientType': self._clientType}
-        #currant = {'ctx': ctx}
-        #current = "Hi Jude"
         value = self._account.getAccountBalance()
         print('Actual account balance: ' + str(value) + ' PLN')
 
+    def getLoan(self):
+        print('-----Loan-----')
+        amount = input('Amount: ')
+        currency = input('Currency: ')
+
+        if currency == 'EUR':
+            currencyEnum = ClientBank.Currency.EUR
+        elif currency == 'USD':
+            currencyEnum = ClientBank.Currency.USD
+        elif currency == 'CHF':
+            currencyEnum = ClientBank.Currency.CHF
+        elif currency == 'GBP':
+            currencyEnum = ClientBank.Currency.GPB
+        elif currency == 'PLN':
+            currencyEnum = ClientBank.Currency.PLN
+        else:
+            print('Wrong currency')
+            return
+
+        year = input('Year: ')
+        month = input('Month: ')
+        day = input('Day: ')
+        year=int(year)
+        month = int(month)
+        day = int(day)
+
+        date = ClientBank.Date(year, month, day)
+        response = self._account.getLoan(float(amount), currencyEnum, date)
+        print('Loan: '+str(response.valuePLN)+ 'PLN ' +str(response.currencyValue)+currency+ ' exchange '+str(response.exchange))
 
     def secondPanel(self):
         while True:
@@ -30,6 +56,8 @@ class ClientI:
             action = action.lower()
             if action == 'g':
                 self.getAccountBalance()
+            elif action == 'l':
+                self.getLoan()
             elif action == 'q':
                 return
             else:
@@ -54,10 +82,14 @@ class ClientI:
         password = input ('Password: ')
         try:
             response = self._bank.login(pesel, password)
-            self._account = response.accountAdministrator
+            base = response.accountAdministrator
             self._pesel = pesel
             self._password = password
             self._clientType = response.type
+            if response.type == ClientBank.Type.STANDARD:
+                self._account = ClientBank.StandardAccountPrx.checkedCast(base)
+            else:
+                self._account = ClientBank.PremiumAccountPrx.checkedCast(base)
             self.secondPanel()
         except Exception as ex:
             print('Excetpion: ' + str(ex))

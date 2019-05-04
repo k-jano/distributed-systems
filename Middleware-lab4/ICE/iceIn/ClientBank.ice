@@ -12,10 +12,6 @@ module ClientBank{
         string msg;
     };
 
-    exception WithdrawErr{
-        string msg;
-    };
-
     enum Type{
         STANDARD =1,
         PREMIUM =2
@@ -33,7 +29,7 @@ module ClientBank{
         float valuePLN;
         float currencyValue;
         Currency currency;
-        float loanPercent;
+        float exchange;
     };
 
     struct AccountKey{
@@ -54,12 +50,10 @@ module ClientBank{
         float value;
     };
 
-    interface StandardAccount{
-        float getAccountBalance() throws UnauthorizedErr;
-    };
-
-    interface PremiumAccount extends StandardAccount{
-        LoanResponse getLoan(string pesel, string password, float value, Currency currency) throws UnauthorizedErr, LoanRefusalErr;
+    struct Date{
+        int year;
+        int month;
+        int day;
     };
 
     struct RegistrationResponse{
@@ -70,6 +64,14 @@ module ClientBank{
     struct LoginResponse{
         Type type;
         StandardAccount* accountAdministrator;
+    };
+
+    interface StandardAccount{
+        float getAccountBalance();
+    };
+
+    interface PremiumAccount extends StandardAccount{
+        LoanResponse getLoan(float value, Currency currency, Date date) throws LoanRefusalErr;
     };
 
     interface UsersRegistration{
