@@ -16,13 +16,12 @@ message AckEmpt{
 }
 
 message AckCur{
-    Currency curs =1;
-    double val = 2;
+    Currency cur =1;
+    float val = 2;
 }
 
 message Subscribe{
-    int32 id =1;
-    repeated Currency curs = 2;
+    repeated Currency curs = 1;
 }
 
 message Unsubscribe{

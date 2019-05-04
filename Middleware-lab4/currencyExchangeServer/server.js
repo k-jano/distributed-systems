@@ -14,21 +14,31 @@ var packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   oneofs: true
 });
 
-var mapCurr = {
-  EUR: 5,
-  USD: 6,
-  CHF: 7,
-  GBP: 8
+var currValues = {
+  EUR: 4.2,
+  USD: 3.8,
+  CHF: 3.7,
+  GBP: 4.9
 };
 
-var currSubscribers = {
-  EUR: [],
-  USD: [],
-  CHF: [],
-  GBP: []
-};
+var currSubscribers = {}
 
 var subscriber= []
+
+
+function removeBank(call) {
+  var id = call.request.id;
+  for (var key in currSubscribers){
+    var list = currSubscribers[key]
+    for (var i=0; i< list.length; i++){
+      if (list[i]==id)
+        list.splice(i, 1)
+    }
+  }
+  call.write({
+   
+  })
+}
 
 function addSubsriber(id, curs) {
   for (var cur in curs) {
@@ -45,51 +55,34 @@ function addSubsriber(id, curs) {
 }
 
 function addBank(call) {
-  console.log("Request")
-  var id = call.request.id;
+  console.log("Adding subscriber")
   var curs = call.request.curs;
-  addSubsriber(id, curs);
+  //addSubsriber(id, curs);
   for (var cur in curs) {
     call.write({
       curs: cur,
-      val: currSubscribers.get(cur)
+      val: currValues.get(cur)
     });
   }
 }
 
-function removeBank(call) {
-  var id = call.request.id;
-  for (var key in currSubscribers){
-    var list = currSubscribers[key]
-    for (var i=0; i< list.length; i++){
-      if (list[i]==id)
-        list.splice(i, 1)
-    }
-  }
-  call.write({
-   
-  })
-}
-
-function print(call){
-  console.log('Catched print')
-  subscriber.push(call)
-  console.log(typeof call)
-  call.write({
-    msg: 'From print'
-  })
-}
-
 function update(){
-  //console.log("In update")
-  subscriber.forEach(elem =>
-    /*sub.write({
-      msg: 'From update'
-    })*/
-    console.log(elem)
+  for (var key in currValues){
+    sign = Math.random()*2
+    sign>1 ? sign=1 : sign=0
+    
+    currentValue = currValues[key]
+    difference = 0.02*currentValue
+    sign ? currentValue+= difference: currentValue -= difference
+    //console.log(currentValue.toFixed(2) + ' ' + key)
+    currValues[key]=currentValue
+  }
+  //console.log()
+  subscriber.forEach(sub =>
+    sub.write({
+      msg: 'From update' + val
+    })
   )
-  //console.log(subscriber)
-
   setTimeout(update, 5000)
 }
 
@@ -105,6 +98,3 @@ server.addService(currencyEx.currencyService.service, {
 server.bind(HOST + ":" + PORT, grpc.ServerCredentials.createInsecure());
 server.start();
 update();
-//console.log(typeof subscriber)
-subscriber.push('Hi')
-subscriber.push(2)

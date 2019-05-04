@@ -15,15 +15,25 @@ class CurrencyUpdater():
     def __init__(self, currencies):
         self.currencies = currencies
         self.enumCurrencies = []
+        self.protoEnumCurrencies = []
+        self.protoIceDict = dict()
         for currency in self.currencies:
             if currency == 'EUR':
                 self.enumCurrencies.append(ClientBank.Currency.EUR)
+                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.EUR)
+                self.protoIceDict[currencyExchange_pb2.Currency.EUR] = ClientBank.Currency.EUR
             elif currency == 'USD':
                 self.enumCurrencies.append(ClientBank.Currency.USD)
+                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.USD)
+                self.protoIceDict[currencyExchange_pb2.Currency.USD] = ClientBank.Currency.USD
             elif currency == 'CHF':
                 self.enumCurrencies.append(ClientBank.Currency.CHF)
+                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.CHF)
+                self.protoIceDict[currencyExchange_pb2.Currency.CHF] = ClientBank.Currency.CHF
             elif currency == 'GPB':
                 self.enumCurrencies.append(ClientBank.Currency.GPB)
+                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.GPB)
+                self.protoIceDict[currencyExchange_pb2.Currency.GPB] = ClientBank.Currency.GPB
             elif currency == 'PLN':
                 self.enumCurrencies.append(ClientBank.Currency.PLN)
             else:
@@ -48,7 +58,9 @@ class CurrencyUpdater():
         return self.currenciesDict
     
     def currencyUpdaterRoutine(self):
-        request=currencyExchange_pb2.AckEmpt()
+        request=currencyExchange_pb2.Subscribe(
+            curs = self.protoEnumCurrencies
+        )
         for response in self._stub.print(request):
-            print(response.msg)
+            self.currenciesDict[self.protoIceDict[response.cur]] = response.val
             

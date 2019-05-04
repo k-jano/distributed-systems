@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='currencyEx',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x16\x63urrencyExchange.proto\x12\ncurrencyEx\"\x17\n\x08\x41\x63kPrint\x12\x0b\n\x03msg\x18\x01 \x01(\t\"\t\n\x07\x41\x63kEmpt\"9\n\x06\x41\x63kCur\x12\"\n\x04\x63urs\x18\x01 \x01(\x0e\x32\x14.currencyEx.Currency\x12\x0b\n\x03val\x18\x02 \x01(\x01\";\n\tSubscribe\x12\n\n\x02id\x18\x01 \x01(\x05\x12\"\n\x04\x63urs\x18\x02 \x03(\x0e\x32\x14.currencyEx.Currency\"\x19\n\x0bUnsubscribe\x12\n\n\x02id\x18\x01 \x01(\x05*7\n\x08\x43urrency\x12\x07\n\x03\x45UR\x10\x00\x12\x07\n\x03USD\x10\x01\x12\x07\n\x03\x43HF\x10\x02\x12\x07\n\x03GPB\x10\x03\x12\x07\n\x03PLN\x10\x04\x32\xbb\x01\n\x0f\x63urrencyService\x12\x36\n\x07\x61\x64\x64\x42\x61nk\x12\x15.currencyEx.Subscribe\x1a\x12.currencyEx.AckCur0\x01\x12:\n\nremoveBank\x12\x17.currencyEx.Unsubscribe\x1a\x13.currencyEx.AckEmpt\x12\x34\n\x05print\x12\x13.currencyEx.AckEmpt\x1a\x14.currencyEx.AckPrint0\x01\x62\x06proto3')
+  serialized_pb=_b('\n\x16\x63urrencyExchange.proto\x12\ncurrencyEx\"\x17\n\x08\x41\x63kPrint\x12\x0b\n\x03msg\x18\x01 \x01(\t\"\t\n\x07\x41\x63kEmpt\"8\n\x06\x41\x63kCur\x12!\n\x03\x63ur\x18\x01 \x01(\x0e\x32\x14.currencyEx.Currency\x12\x0b\n\x03val\x18\x02 \x01(\x02\"/\n\tSubscribe\x12\"\n\x04\x63urs\x18\x01 \x03(\x0e\x32\x14.currencyEx.Currency\"\x19\n\x0bUnsubscribe\x12\n\n\x02id\x18\x01 \x01(\x05*7\n\x08\x43urrency\x12\x07\n\x03\x45UR\x10\x00\x12\x07\n\x03USD\x10\x01\x12\x07\n\x03\x43HF\x10\x02\x12\x07\n\x03GPB\x10\x03\x12\x07\n\x03PLN\x10\x04\x32\xbb\x01\n\x0f\x63urrencyService\x12\x36\n\x07\x61\x64\x64\x42\x61nk\x12\x15.currencyEx.Subscribe\x1a\x12.currencyEx.AckCur0\x01\x12:\n\nremoveBank\x12\x17.currencyEx.Unsubscribe\x1a\x13.currencyEx.AckEmpt\x12\x34\n\x05print\x12\x13.currencyEx.AckEmpt\x1a\x14.currencyEx.AckPrint0\x01\x62\x06proto3')
 )
 
 _CURRENCY = _descriptor.EnumDescriptor(
@@ -53,8 +53,8 @@ _CURRENCY = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=221,
-  serialized_end=276,
+  serialized_start=208,
+  serialized_end=263,
 )
 _sym_db.RegisterEnumDescriptor(_CURRENCY)
 
@@ -130,7 +130,7 @@ _ACKCUR = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='curs', full_name='currencyEx.AckCur.curs', index=0,
+      name='cur', full_name='currencyEx.AckCur.cur', index=0,
       number=1, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -138,7 +138,7 @@ _ACKCUR = _descriptor.Descriptor(
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='val', full_name='currencyEx.AckCur.val', index=1,
-      number=2, type=1, cpp_type=5, label=1,
+      number=2, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -156,7 +156,7 @@ _ACKCUR = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=74,
-  serialized_end=131,
+  serialized_end=130,
 )
 
 
@@ -168,15 +168,8 @@ _SUBSCRIBE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='id', full_name='currencyEx.Subscribe.id', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='curs', full_name='currencyEx.Subscribe.curs', index=1,
-      number=2, type=14, cpp_type=8, label=3,
+      name='curs', full_name='currencyEx.Subscribe.curs', index=0,
+      number=1, type=14, cpp_type=8, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -193,8 +186,8 @@ _SUBSCRIBE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=133,
-  serialized_end=192,
+  serialized_start=132,
+  serialized_end=179,
 )
 
 
@@ -224,11 +217,11 @@ _UNSUBSCRIBE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=194,
-  serialized_end=219,
+  serialized_start=181,
+  serialized_end=206,
 )
 
-_ACKCUR.fields_by_name['curs'].enum_type = _CURRENCY
+_ACKCUR.fields_by_name['cur'].enum_type = _CURRENCY
 _SUBSCRIBE.fields_by_name['curs'].enum_type = _CURRENCY
 DESCRIPTOR.message_types_by_name['AckPrint'] = _ACKPRINT
 DESCRIPTOR.message_types_by_name['AckEmpt'] = _ACKEMPT
@@ -281,8 +274,8 @@ _CURRENCYSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=279,
-  serialized_end=466,
+  serialized_start=266,
+  serialized_end=453,
   methods=[
   _descriptor.MethodDescriptor(
     name='addBank',
