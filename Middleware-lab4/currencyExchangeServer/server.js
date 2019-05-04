@@ -28,6 +28,8 @@ var currSubscribers = {
   GBP: []
 };
 
+var subscriber= []
+
 function addSubsriber(id, curs) {
   for (var cur in curs) {
     var list = currSubscribers.get(cur);
@@ -69,9 +71,26 @@ function removeBank(call) {
   })
 }
 
-function print(call, callback){
+function print(call){
   console.log('Catched print')
-  callback(null, {msg: 'Hi from grpc'})
+  subscriber.push(call)
+  console.log(typeof call)
+  call.write({
+    msg: 'From print'
+  })
+}
+
+function update(){
+  //console.log("In update")
+  subscriber.forEach(elem =>
+    /*sub.write({
+      msg: 'From update'
+    })*/
+    console.log(elem)
+  )
+  //console.log(subscriber)
+
+  setTimeout(update, 5000)
 }
 
 var protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
@@ -85,3 +104,7 @@ server.addService(currencyEx.currencyService.service, {
 
 server.bind(HOST + ":" + PORT, grpc.ServerCredentials.createInsecure());
 server.start();
+update();
+//console.log(typeof subscriber)
+subscriber.push('Hi')
+subscriber.push(2)

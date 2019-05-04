@@ -24,7 +24,7 @@ class currencyServiceStub(object):
         request_serializer=currencyExchange__pb2.Unsubscribe.SerializeToString,
         response_deserializer=currencyExchange__pb2.AckEmpt.FromString,
         )
-    self.print = channel.unary_unary(
+    self.print = channel.unary_stream(
         '/currencyEx.currencyService/print',
         request_serializer=currencyExchange__pb2.AckEmpt.SerializeToString,
         response_deserializer=currencyExchange__pb2.AckPrint.FromString,
@@ -69,7 +69,7 @@ def add_currencyServiceServicer_to_server(servicer, server):
           request_deserializer=currencyExchange__pb2.Unsubscribe.FromString,
           response_serializer=currencyExchange__pb2.AckEmpt.SerializeToString,
       ),
-      'print': grpc.unary_unary_rpc_method_handler(
+      'print': grpc.unary_stream_rpc_method_handler(
           servicer.print,
           request_deserializer=currencyExchange__pb2.AckEmpt.FromString,
           response_serializer=currencyExchange__pb2.AckPrint.SerializeToString,

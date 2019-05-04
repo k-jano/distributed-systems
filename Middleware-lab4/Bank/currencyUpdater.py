@@ -49,6 +49,6 @@ class CurrencyUpdater():
     
     def currencyUpdaterRoutine(self):
         request=currencyExchange_pb2.AckEmpt()
-        response = self._stub.print(request)
-        print(response.msg)
+        for response in self._stub.print(request):
+            print(response.msg)
             

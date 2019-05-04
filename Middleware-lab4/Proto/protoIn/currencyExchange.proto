@@ -4,7 +4,7 @@ package currencyEx;
 service currencyService{
     rpc addBank(Subscribe) returns (stream AckCur);
     rpc removeBank(Unsubscribe) returns (AckEmpt);
-    rpc print(AckEmpt) returns(AckPrint);
+    rpc print(AckEmpt) returns (stream AckPrint);
 }
 
 message AckPrint{
