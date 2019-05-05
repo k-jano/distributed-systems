@@ -52,9 +52,8 @@ function update(){
   }
   curEur = currValues['EUR']
   toPrint = curEur.toFixed(2)
-  console.log(currValues['EUR'].toFixed(2) + 'EUR ' + currValues['USD'].toFixed(2) + 'USD ' +currValues['CHF'].toFixed(2) + 'CHF ' + currValues['GBP'].toFixed(2) + 'GPB ')
+  //console.log(currValues['EUR'].toFixed(2) + 'EUR ' + currValues['USD'].toFixed(2) + 'USD ' +currValues['CHF'].toFixed(2) + 'CHF ' + currValues['GBP'].toFixed(2) + 'GPB ')
   for (var sub in currSubscribers){
-    //console.log(sub)
     call = currSubscribers[sub].call
     currSubscribers[sub].curs.forEach(cur =>
       call.write({

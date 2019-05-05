@@ -31,7 +31,7 @@ class ClientI:
         elif currency == 'CHF':
             currencyEnum = ClientBank.Currency.CHF
         elif currency == 'GBP':
-            currencyEnum = ClientBank.Currency.GPB
+            currencyEnum = ClientBank.Currency.GBP
         elif currency == 'PLN':
             currencyEnum = ClientBank.Currency.PLN
         else:
@@ -46,8 +46,11 @@ class ClientI:
         day = int(day)
 
         date = ClientBank.Date(year, month, day)
-        response = self._account.getLoan(float(amount), currencyEnum, date)
-        print('Loan: '+str(response.valuePLN)+ 'PLN ' +str(response.currencyValue)+currency+ ' exchange '+str(response.exchange))
+        try:
+            response = self._account.getLoan(float(amount), currencyEnum, date)
+            print('Loan: '+str(response.valuePLN)+ 'PLN ' + '{:.3f}'.format(response.currencyValue) + ' exchange '+ '{:.3f}'.format(response.exchange))
+        except Exception as ex:
+            print('Exception: ' + str(ex))
 
     def secondPanel(self):
         while True:
@@ -61,7 +64,7 @@ class ClientI:
             elif action == 'q':
                 return
             else:
-                print('Invalid action')
+                print("Enter: 'g' to get account balance, 'l' to get loan, 'q' to quit")
 
     def register(self):
         print('-----Registration-----')
@@ -106,7 +109,7 @@ class ClientI:
             elif action == 'q':
                 return
             else:
-                print('Invalid action')
+                print("Enter: 'r' to register, 'l' to login, 'q' to quit")
             
 
 if __name__ == "__main__":

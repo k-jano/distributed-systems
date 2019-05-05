@@ -51,7 +51,7 @@ class CurrencyUpdater():
             else:
                 val = INITIAL_VALUE
             self.currenciesDict[enumCurrency] = val
-        print(self.currenciesDict)
+        #print(self.currenciesDict)
         self._channel = grpc.insecure_channel('127.0.0.1:' + PORT)
         self._stub = currencyExchange_pb2_grpc.currencyServiceStub(self._channel)
 
@@ -59,16 +59,11 @@ class CurrencyUpdater():
         return self.currenciesDict
     
     def currencyUpdaterRoutine(self):
-        print(self.protoEnumCurrencies)
+        #print(self.protoEnumCurrencies)
         request=currencyExchange_pb2.Subscribe(
             port = self.port,
             curs = self.protoEnumCurrencies
         )
         for response in self._stub.addBank(request):
-            #cur = response.cur
-            #value = response.val
-            #print(cur)
-            #print(value)
             self.currenciesDict[self.protoIceDict[response.cur]] = response.val
-            #print('Response')
             
