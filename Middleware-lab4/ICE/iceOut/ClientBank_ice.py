@@ -116,9 +116,9 @@ if 'Currency' not in _M_ClientBank.__dict__:
     Currency.EUR = Currency("EUR", 1)
     Currency.USD = Currency("USD", 2)
     Currency.CHF = Currency("CHF", 3)
-    Currency.GPB = Currency("GPB", 4)
+    Currency.GBP = Currency("GBP", 4)
     Currency.PLN = Currency("PLN", 5)
-    Currency._enumerators = { 1:Currency.EUR, 2:Currency.USD, 3:Currency.CHF, 4:Currency.GPB, 5:Currency.PLN }
+    Currency._enumerators = { 1:Currency.EUR, 2:Currency.USD, 3:Currency.CHF, 4:Currency.GBP, 5:Currency.PLN }
 
     _M_ClientBank._t_Currency = IcePy.defineEnum('::ClientBank::Currency', Currency, (), Currency._enumerators)
 
@@ -526,6 +526,98 @@ if 'Date' not in _M_ClientBank.__dict__:
     _M_ClientBank.Date = Date
     del Date
 
+if 'RegistrationResponse' not in _M_ClientBank.__dict__:
+    _M_ClientBank.RegistrationResponse = Ice.createTempClass()
+    class RegistrationResponse(object):
+        def __init__(self, password='', type=_M_ClientBank.Type.STANDARD):
+            self.password = password
+            self.type = type
+
+        def __hash__(self):
+            _h = 0
+            _h = 5 * _h + Ice.getHash(self.password)
+            _h = 5 * _h + Ice.getHash(self.type)
+            return _h % 0x7fffffff
+
+        def __compare(self, other):
+            if other is None:
+                return 1
+            elif not isinstance(other, _M_ClientBank.RegistrationResponse):
+                return NotImplemented
+            else:
+                if self.password is None or other.password is None:
+                    if self.password != other.password:
+                        return (-1 if self.password is None else 1)
+                else:
+                    if self.password < other.password:
+                        return -1
+                    elif self.password > other.password:
+                        return 1
+                if self.type is None or other.type is None:
+                    if self.type != other.type:
+                        return (-1 if self.type is None else 1)
+                else:
+                    if self.type < other.type:
+                        return -1
+                    elif self.type > other.type:
+                        return 1
+                return 0
+
+        def __lt__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r < 0
+
+        def __le__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r <= 0
+
+        def __gt__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r > 0
+
+        def __ge__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r >= 0
+
+        def __eq__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r == 0
+
+        def __ne__(self, other):
+            r = self.__compare(other)
+            if r is NotImplemented:
+                return r
+            else:
+                return r != 0
+
+        def __str__(self):
+            return IcePy.stringify(self, _M_ClientBank._t_RegistrationResponse)
+
+        __repr__ = __str__
+
+    _M_ClientBank._t_RegistrationResponse = IcePy.defineStruct('::ClientBank::RegistrationResponse', RegistrationResponse, (), (
+        ('password', (), IcePy._t_string),
+        ('type', (), _M_ClientBank._t_Type)
+    ))
+
+    _M_ClientBank.RegistrationResponse = RegistrationResponse
+    del RegistrationResponse
+
 _M_ClientBank._t_StandardAccount = IcePy.defineValue('::ClientBank::StandardAccount', Ice.Value, -1, (), False, True, None, ())
 
 if 'StandardAccountPrx' not in _M_ClientBank.__dict__:
@@ -651,98 +743,6 @@ if 'PremiumAccountPrx' not in _M_ClientBank.__dict__:
 
     _M_ClientBank.PremiumAccount = PremiumAccount
     del PremiumAccount
-
-if 'RegistrationResponse' not in _M_ClientBank.__dict__:
-    _M_ClientBank.RegistrationResponse = Ice.createTempClass()
-    class RegistrationResponse(object):
-        def __init__(self, password='', type=_M_ClientBank.Type.STANDARD):
-            self.password = password
-            self.type = type
-
-        def __hash__(self):
-            _h = 0
-            _h = 5 * _h + Ice.getHash(self.password)
-            _h = 5 * _h + Ice.getHash(self.type)
-            return _h % 0x7fffffff
-
-        def __compare(self, other):
-            if other is None:
-                return 1
-            elif not isinstance(other, _M_ClientBank.RegistrationResponse):
-                return NotImplemented
-            else:
-                if self.password is None or other.password is None:
-                    if self.password != other.password:
-                        return (-1 if self.password is None else 1)
-                else:
-                    if self.password < other.password:
-                        return -1
-                    elif self.password > other.password:
-                        return 1
-                if self.type is None or other.type is None:
-                    if self.type != other.type:
-                        return (-1 if self.type is None else 1)
-                else:
-                    if self.type < other.type:
-                        return -1
-                    elif self.type > other.type:
-                        return 1
-                return 0
-
-        def __lt__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r < 0
-
-        def __le__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r <= 0
-
-        def __gt__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r > 0
-
-        def __ge__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r >= 0
-
-        def __eq__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r == 0
-
-        def __ne__(self, other):
-            r = self.__compare(other)
-            if r is NotImplemented:
-                return r
-            else:
-                return r != 0
-
-        def __str__(self):
-            return IcePy.stringify(self, _M_ClientBank._t_RegistrationResponse)
-
-        __repr__ = __str__
-
-    _M_ClientBank._t_RegistrationResponse = IcePy.defineStruct('::ClientBank::RegistrationResponse', RegistrationResponse, (), (
-        ('password', (), IcePy._t_string),
-        ('type', (), _M_ClientBank._t_Type)
-    ))
-
-    _M_ClientBank.RegistrationResponse = RegistrationResponse
-    del RegistrationResponse
 
 if 'LoginResponse' not in _M_ClientBank.__dict__:
     _M_ClientBank.LoginResponse = Ice.createTempClass()

@@ -3,16 +3,6 @@ package currencyEx;
 
 service currencyService{
     rpc addBank(Subscribe) returns (stream AckCur);
-    rpc removeBank(Unsubscribe) returns (AckEmpt);
-    rpc print(AckEmpt) returns (stream AckPrint);
-}
-
-message AckPrint{
-    string msg =1;
-}
-
-message AckEmpt{
-
 }
 
 message AckCur{
@@ -21,17 +11,14 @@ message AckCur{
 }
 
 message Subscribe{
-    repeated Currency curs = 1;
-}
-
-message Unsubscribe{
-    int32 id=1;
+    int32 port=1;
+    repeated Currency curs = 2;
 }
 
 enum Currency{
     EUR=0;
     USD=1;
     CHF=2;
-    GPB=3;
+    GBP=3;
     PLN=4;
 }

@@ -12,28 +12,29 @@ INITIAL_VALUE = 5.0
 PORT = '50051'
 
 class CurrencyUpdater():
-    def __init__(self, currencies):
+    def __init__(self, currencies, port):
         self.currencies = currencies
+        self.port = port
         self.enumCurrencies = []
         self.protoEnumCurrencies = []
         self.protoIceDict = dict()
         for currency in self.currencies:
             if currency == 'EUR':
                 self.enumCurrencies.append(ClientBank.Currency.EUR)
-                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.EUR)
-                self.protoIceDict[currencyExchange_pb2.Currency.EUR] = ClientBank.Currency.EUR
+                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.Value('EUR'))
+                self.protoIceDict[currencyExchange_pb2.Currency.Value('EUR')] = ClientBank.Currency.EUR
             elif currency == 'USD':
                 self.enumCurrencies.append(ClientBank.Currency.USD)
-                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.USD)
-                self.protoIceDict[currencyExchange_pb2.Currency.USD] = ClientBank.Currency.USD
+                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.Value('USD'))
+                self.protoIceDict[currencyExchange_pb2.Currency.Value('USD')] = ClientBank.Currency.USD
             elif currency == 'CHF':
                 self.enumCurrencies.append(ClientBank.Currency.CHF)
-                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.CHF)
-                self.protoIceDict[currencyExchange_pb2.Currency.CHF] = ClientBank.Currency.CHF
-            elif currency == 'GPB':
-                self.enumCurrencies.append(ClientBank.Currency.GPB)
-                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.GPB)
-                self.protoIceDict[currencyExchange_pb2.Currency.GPB] = ClientBank.Currency.GPB
+                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.Value('CHF'))
+                self.protoIceDict[currencyExchange_pb2.Currency.Value('CHF')] = ClientBank.Currency.CHF
+            elif currency == 'GBP':
+                self.enumCurrencies.append(ClientBank.Currency.GBP)
+                self.protoEnumCurrencies.append(currencyExchange_pb2.Currency.Value('GBP'))
+                self.protoIceDict[currencyExchange_pb2.Currency.Value('GBP')] = ClientBank.Currency.GBP
             elif currency == 'PLN':
                 self.enumCurrencies.append(ClientBank.Currency.PLN)
             else:
@@ -58,9 +59,16 @@ class CurrencyUpdater():
         return self.currenciesDict
     
     def currencyUpdaterRoutine(self):
+        print(self.protoEnumCurrencies)
         request=currencyExchange_pb2.Subscribe(
+            port = self.port,
             curs = self.protoEnumCurrencies
         )
-        for response in self._stub.print(request):
+        for response in self._stub.addBank(request):
+            #cur = response.cur
+            #value = response.val
+            #print(cur)
+            #print(value)
             self.currenciesDict[self.protoIceDict[response.cur]] = response.val
+            #print('Response')
             

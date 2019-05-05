@@ -21,7 +21,7 @@ module ClientBank{
         EUR =1,
         USD =2,
         CHF =3,
-        GPB =4,
+        GBP =4,
         PLN =5
     };
 
@@ -61,17 +61,17 @@ module ClientBank{
         Type type;
     };
     
-    struct LoginResponse{
-        Type type;
-        StandardAccount* accountAdministrator;
-    };
-
     interface StandardAccount{
         float getAccountBalance();
     };
 
     interface PremiumAccount extends StandardAccount{
         LoanResponse getLoan(float value, Currency currency, Date date) throws LoanRefusalErr;
+    };
+
+    struct LoginResponse{
+        Type type;
+        StandardAccount* accountAdministrator;
     };
 
     interface UsersRegistration{

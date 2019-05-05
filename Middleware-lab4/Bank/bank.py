@@ -32,7 +32,7 @@ class BankManagerI(ClientBank.UsersRegistration):
         usersDict = self._usersDict.getDict()
         searchedKey = ClientBank.AccountKey(pesel, searchedType)
         if searchedKey in usersDict.keys():
-            password = usersDict.get(searchedKey).AccountUser.password
+            password = usersDict.get(searchedKey).accountUser.password
         else:
             password = ''
 
@@ -113,11 +113,11 @@ if __name__ == "__main__":
     parser.add_argument('port', type=int)
     parser.add_argument('currencies', nargs='+')
     args= parser.parse_args()
-    currencyUpdater = CurrencyUpdater(set(args.currencies))
+    port=args.port
+    currencyUpdater = CurrencyUpdater(set(args.currencies), port)
     usersDict = UsersDict()
 
     with Ice.initialize(sys.argv) as communicator:
-        port=args.port
         adapter = communicator.createObjectAdapterWithEndpoints("BankAdapter", "default -p " + str(port))
         bankManager = BankManagerI(currencyUpdater, usersDict, adapter, communicator)
         adapter.add(bankManager, communicator.stringToIdentity("BankManager"))
