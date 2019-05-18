@@ -1,0 +1,3 @@
+'Pan Tadeusz' 20
+'W pustyni i w puszczy' 10
+'Dziady' 15
