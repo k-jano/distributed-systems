@@ -1,0 +1,4 @@
+'Dziady' 15
+'Pan Tadeusz' 20
+'W pustyni i w puszczy' 10
+'Iliada' 14

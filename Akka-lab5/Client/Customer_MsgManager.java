@@ -26,18 +26,13 @@ public class Customer_MsgManager extends AbstractActor {
 
     private String SplitTitle(String s){
         String[] split = s.split(" ");
-        String title = split[1];
-        if(title.startsWith("'")){
-            String tmp = "";
-            for(int i=1; i<split.length; i++){
-                tmp += split[i];
-                tmp += ' ';
-            }
-            title = tmp;
-        }else {
-            title = "'" + title + "'";
+        String title, tmp = "";
+        for(int i=1; i<split.length; i++){
+            tmp+= split[i];
+            tmp+= " ";
         }
-
+        tmp = tmp.substring(0, tmp.length()-1);
+        title = "'" + tmp + "'";
         return title;
     }
 }
