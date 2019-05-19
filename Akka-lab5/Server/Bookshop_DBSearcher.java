@@ -7,6 +7,8 @@ import akka.event.LoggingAdapter;
 
 import java.io.*;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Bookshop_DBSearcher extends AbstractActor {
 
@@ -40,25 +42,42 @@ public class Bookshop_DBSearcher extends AbstractActor {
         return -1;
     }
 
-    private String searchDB(String title) throws FileNotFoundException, IOException {
-        String filePath = new File("").getAbsolutePath();
-        BufferedReader reader1 = new BufferedReader(new FileReader(filePath + "/src/DB/db1.txt"));
-        BufferedReader reader2 = new BufferedReader(new FileReader(filePath + "/src/DB/db2.txt"));
-        int val;
-        String msg = "Price: ";
-        String line1, line2, line = null;
-        do{
-            line1 = reader1.readLine();
-            line2 = reader2.readLine();
-            if (line1 == null && line2 == null)
-                line = null;
-            else
-                line = "";
+    private String searchDB(String title) throws IOException, NullPointerException {
+        LinkedList<String> paths = new LinkedList<>();
+        File dbFolder = new File("src/DB");
+        for (File db : dbFolder.listFiles()){
+            if(db.isFile() && db.getName().startsWith("db")){
+                paths.push(db.getPath());
+            }
+        }
 
-            if(line1 != null && getPrice(line1, title)!= -1)
-                return msg+ getPrice(line1, title);
-            else if(line2 != null && getPrice(line2, title)!= -1)
-                return msg + getPrice(line2, title);
+        LinkedList<BufferedReader> bufferedReaders = new LinkedList<>();
+        for(int i=0; i<paths.size(); i++){
+            BufferedReader bfReader = new BufferedReader(new FileReader(paths.get(i)));
+            bufferedReaders.push(bfReader);
+        }
+
+        String msg = "Price: ";
+        String line;
+
+        do{
+            LinkedList<String> lines = new LinkedList<>();
+
+            line = null;
+            for(int i=0; i<paths.size(); i++){
+                String singleLine = bufferedReaders.get(i).readLine();
+                lines.push(singleLine);
+            }
+
+            for (String singleLine : lines){
+                if(!(singleLine == null))
+                    line = "";
+            }
+
+            for(int i=0; i<paths.size(); i++){
+                if(lines.get(i) != null && getPrice(lines.get(i), title) != -1)
+                    return msg + getPrice(lines.get(i), title);
+            }
 
         } while ( line != null);
         return "Title not in DB";

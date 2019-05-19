@@ -67,7 +67,7 @@ public class Bookshop_Actor extends AbstractActor {
     private static SupervisorStrategy strategy
             = new OneForOneStrategy(10, Duration.create("1 minute"), DeciderBuilder.
             match(FileNotFoundException.class, o -> restart()).
-            match(IOException.class, o->restart()).
+            match(NullPointerException.class, o->restart()).
             matchAny(o -> restart()).
             build());
 
