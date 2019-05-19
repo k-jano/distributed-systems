@@ -17,7 +17,7 @@ public class Customer {
 
         final ActorSystem system = ActorSystem.create("customer_system", config);
         final ActorRef actor  = system.actorOf(Props.create(Customer_Actor.class), "customerAct");
-        System.out.println("Commands: 's title'");
+        System.out.println("Commands: s title, o title");
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while (true){

@@ -32,6 +32,7 @@ public class Bookshop_Actor extends AbstractActor {
                         requests.put(counter, context().sender());
                         System.out.println(cmsg.getOperationType()+ ": " + cmsg.getTitle());
                         DBRequest dbreq = new DBRequest(counter, cmsg.getOperationType(), cmsg.getTitle());
+                        counter++;
                         context().child("dbSearcher").get().tell(dbreq, getSelf());
                     }
                 })
@@ -46,12 +47,12 @@ public class Bookshop_Actor extends AbstractActor {
                             requests.get(dbres.getId()).tell(bmsg, getSelf());
                         } else {
                             OrderRequest oreq = new OrderRequest(dbres.getId(), dbres.getTitle());
-                            context().child("dbOrder").get().tell(oreq, getSelf());
+                            context().child("dbOrderTaker").get().tell(oreq, getSelf());
                         }
                     }
                 })
                 .match(OrderResponse.class, ores -> {
-                    BookshopMessage bmsg = new BookshopMessage(ores.getType(), ores.getTitle(), ores.getMsg());
+                    BookshopMessage bmsg = new BookshopMessage(OperationType.ORDER, ores.getTitle(), ores.getMsg());
                     requests.get(ores.getId()).tell(bmsg, getSelf());
                 })
                 .matchAny(o -> log.info("received unknown message"))

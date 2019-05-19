@@ -14,9 +14,12 @@ public class Customer_MsgManager extends AbstractActor {
     public AbstractActor.Receive createReceive() {
         return receiveBuilder()
                 .match(String.class, s -> {
+                    String title = SplitTitle(s);
                     if(s.startsWith("s")){
-                        String title= SplitTitle(s);
                         CustomerMessage msg = new CustomerMessage(OperationType.SEARCH, title);
+                        getSender().tell(msg, getSelf());
+                    } else if(s.startsWith("o")){
+                        CustomerMessage msg = new CustomerMessage(OperationType.ORDER, title);
                         getSender().tell(msg, getSelf());
                     }
                 })
